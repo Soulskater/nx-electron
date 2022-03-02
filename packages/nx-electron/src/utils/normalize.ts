@@ -1,6 +1,6 @@
 import { resolve, dirname, relative, basename } from 'path';
-import { AdditionalEntryPoint} from './types';
-import { BuildElectronBuilderOptions, NormalizedBuildElectronBuilderOptions} from '../executors/build/executor';
+import { AdditionalEntryPoint } from './types';
+import { BuildElectronBuilderOptions, NormalizedBuildElectronBuilderOptions } from '../executors/build/executor';
 import { PackageElectronBuilderOptions } from '../executors/package/executor';
 import { statSync } from 'fs';
 
@@ -9,7 +9,7 @@ export interface FileReplacement {
   with: string;
 }
 
-export function normalizeBuildOptions( options: BuildElectronBuilderOptions, root: string, sourceRoot: string, projectRoot: string): NormalizedBuildElectronBuilderOptions {
+export function normalizeBuildOptions(options: BuildElectronBuilderOptions, root: string, sourceRoot: string, projectRoot: string): NormalizedBuildElectronBuilderOptions {
   return {
     ...options,
     root,
@@ -26,6 +26,7 @@ export function normalizeBuildOptions( options: BuildElectronBuilderOptions, roo
       options.additionalEntryPoints ?? []
     ),
     outputFileName: options.outputFileName ?? 'main.js',
+    alias: options.alias
   };
 }
 
@@ -65,7 +66,7 @@ function normalizeAssets(
       return {
         input,
         output,
-        glob,
+        glob
       };
     } else {
       if (asset.output.startsWith('..')) {
@@ -79,7 +80,7 @@ function normalizeAssets(
         ...asset,
         input: resolvedAssetPath,
         // Now we remove starting slash to make Webpack place it from the output root.
-        output: asset.output.replace(/^\//, ''),
+        output: asset.output.replace(/^\//, '')
       };
     }
   });
@@ -91,7 +92,7 @@ function normalizeFileReplacements(
 ): FileReplacement[] {
   return fileReplacements.map((fileReplacement) => ({
     replace: resolve(root, fileReplacement.replace),
-    with: resolve(root, fileReplacement.with),
+    with: resolve(root, fileReplacement.with)
   }));
 }
 
@@ -111,7 +112,7 @@ function normalizeAdditionalEntries(
     ({ entryName, entryPath }) =>
       ({
         entryName,
-        entryPath: resolve(root, entryPath),
+        entryPath: resolve(root, entryPath)
       } as AdditionalEntryPoint)
   );
 }

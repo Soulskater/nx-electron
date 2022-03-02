@@ -7,6 +7,7 @@ import treeKill from 'tree-kill';
 import { ElectronBuildEvent } from '../build/executor';
 
 try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require('dotenv').config();
 } catch (e) {}
 
@@ -98,7 +99,7 @@ async function handleBuildEvent(event: ElectronBuildEvent, options: ElectronExec
   if ((!event.success || options.watch) && subProcess) {
     await killProcess();
   }
-  
+
   runProcess(event, options);
 }
 
@@ -156,6 +157,7 @@ function runWaitUntilTargets(
     options.waitUntilTargets.map(async (waitUntilTarget) => {
       const target = parseTargetString(waitUntilTarget);
       const output = await runExecutor(target, {}, context);
+      // eslint-disable-next-line no-async-promise-executor
       return new Promise<{ success: boolean }>(async (resolve) => {
         let event = await output.next();
         // Resolve after first event

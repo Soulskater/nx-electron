@@ -30,22 +30,24 @@ export interface BuildBuilderOptions {
   maxWorkers?: number;
   memoryLimit?: number;
   poll?: number;
-
   fileReplacements: FileReplacement[];
-  assets?: any[];
 
+  assets?: any[];
   progress?: boolean;
+
   statsJson?: boolean;
   extractLicenses?: boolean;
   obfuscate?: boolean;
   verbose?: boolean;
-
   webpackConfig?: string;
 
   root?: string;
+
   sourceRoot?: string;
+  preload?: string;
+  alias?: { [key: string]: string };
   projectRoot?: string;
-  
+
   // tsPlugins?: TsPluginEntry[];
 
   additionalEntryPoints?: AdditionalEntryPoint[];

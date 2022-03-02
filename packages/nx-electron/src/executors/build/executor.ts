@@ -15,6 +15,7 @@ import { MAIN_OUTPUT_FILENAME } from '../../utils/config';
 import { generatePackageJson } from '../../utils/generate-package-json';
 
 try {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   require('dotenv').config();
 } catch (e) {}
 
@@ -43,7 +44,7 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
   const projGraph = readCachedProjectGraph();
 
   if (!normalizedOptions.buildLibsFromSource) {
-    const { target, dependencies } = 
+    const { target, dependencies } =
       calculateProjectDependencies(projGraph, context.root, context.projectName, context.targetName, context.configurationName);
 
     normalizedOptions.tsConfig = createTmpTsConfig(normalizedOptions.tsConfig, context.root, target.data.root, dependencies);
@@ -59,12 +60,13 @@ export function executor(rawOptions: BuildElectronBuilderOptions, context: Execu
 
   let config = getElectronWebpackConfig(normalizedOptions);
   if (normalizedOptions.webpackConfig) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     config = require(normalizedOptions.webpackConfig)(config, {
       normalizedOptions,
       configuration: context.configurationName,
     });
   }
-  config.entry['preload'] = join(normalizedOptions.sourceRoot, 'app/api/preload.ts');
+  config.entry['preload'] = join(normalizedOptions.sourceRoot, normalizedOptions.preload ?? 'app/preload.ts');
 
 
   return eachValueFrom(

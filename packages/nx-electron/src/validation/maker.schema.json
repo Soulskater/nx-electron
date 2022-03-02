@@ -4740,7 +4740,8 @@
                   "arm64",
                   "armv7l",
                   "ia32",
-                  "x64"
+                  "x64",
+                  "universal"
                 ],
                 "type": "string"
               },
@@ -4751,7 +4752,8 @@
                 "arm64",
                 "armv7l",
                 "ia32",
-                "x64"
+                "x64",
+                "universal"
               ],
               "type": "string"
             }

@@ -36,14 +36,22 @@
       "oneOf": [
         {
           "type": "string",
-          "enum": ["windows", "mac", "linux"]
+          "enum": [
+            "windows",
+            "mac",
+            "linux"
+          ]
         },
         {
           "type": "array",
           "uniqueItems": true,
           "items": {
             "type": "string",
-            "enum": ["windows", "mac", "linux"]
+            "enum": [
+              "windows",
+              "mac",
+              "linux"
+            ]
           }
         }
       ],
@@ -51,14 +59,28 @@
     },
     "arch": {
       "type": "string",
-      "enum": ["x64", "ia32", "armv7l", "arm64"],
+      "enum": [
+        "x64",
+        "ia32",
+        "armv7l",
+        "arm64",
+        "universal"
+      ],
       "description": "Package architecture."
     },
     "publishPolicy": {
       "type": "string",
-      "enum": ["onTag", "onTagOrDraft", "always", "never"],
+      "enum": [
+        "onTag",
+        "onTagOrDraft",
+        "always",
+        "never"
+      ],
       "description": "Package publish policy."
     }
   },
-  "required": ["name", "frontendProject"]
+  "required": [
+    "name",
+    "frontendProject"
+  ]
 }

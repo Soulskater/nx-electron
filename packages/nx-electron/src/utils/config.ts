@@ -1,7 +1,7 @@
 import { Configuration, ProgressPlugin, DefinePlugin, WebpackPluginInstance } from 'webpack';
 
 import * as ts from 'typescript';
-import { join } from 'path';
+import path, { join } from 'path';
 
 import { LicenseWebpackPlugin } from 'license-webpack-plugin';
 import ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
@@ -9,6 +9,7 @@ import TsConfigPathsPlugin from 'tsconfig-paths-webpack-plugin';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { readTsConfig } from '@nrwl/workspace/src/utilities/typescript';
 import { BuildBuilderOptions } from './types';
+import nodeExternals from 'webpack-node-externals';
 
 export const MAIN_OUTPUT_FILENAME = 'main.js';
 export const INDEX_OUTPUT_FILENAME = 'index.js';
@@ -24,13 +25,15 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
   const extensions = ['.ts', '.tsx', '.mjs', '.js', '.jsx'];
 
   const additionalEntryPoints = options.additionalEntryPoints?.reduce(
-    (obj, current) => ({ ...obj, [current.entryName]: current.entryPath }), {} as { [entryName: string]: string }) ?? {};
-  
+    (obj, current) => ({
+      ...obj,
+      [current.entryName]: current.entryPath
+    }), {} as { [entryName: string]: string }) ?? {};
   const webpackConfig: Configuration = {
     entry: {
       main: [options.main],
       // preload: [options.main.replace(/([.][a-z]+)$/, ".preload$1")],
-      ...additionalEntryPoints,
+      ...additionalEntryPoints
     },
     devtool: options.sourceMap ? 'source-map' : false,
     mode: options.optimization ? 'production' : 'development',
@@ -41,7 +44,7 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
       },
       hashFunction: 'xxhash64',
       // Disabled for performance
-      pathinfo: false,
+      pathinfo: false
     },
     module: {
       // Enabled for performance
@@ -55,10 +58,15 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
             configFile: options.tsConfig,
             transpileOnly: true,
             // https://github.com/TypeStrong/ts-loader/pull/685
-            experimentalWatchApi: true,
-          },
-        },
-      ],
+            experimentalWatchApi: true
+          }
+        }
+      ]
+    },
+    externalsPresets: { node: true },
+    externals: [nodeExternals()],
+    node: {
+      __dirname: false
     },
     resolve: {
       extensions,
@@ -77,14 +85,14 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
     },
     plugins: [
       new ForkTsCheckerWebpackPlugin({
-        typescript: { 
-          enabled: true, 
-          configFile: options.tsConfig, 
-          memoryLimit: options.memoryLimit || 2018 
+        typescript: {
+          configFile: options.tsConfig,
+          memoryLimit: options.memoryLimit || 2018
         }
       }),
       new DefinePlugin({
-        __BUILD_VERSION__: JSON.stringify(require(join(options.root, "package.json")).version),
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        __BUILD_VERSION__: JSON.stringify(require(join(options.root, 'package.json')).version),
         __BUILD_DATE__: Date.now()
       })
     ],
@@ -128,12 +136,12 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
               '.gitkeep',
               '**/.DS_Store',
               '**/Thumbs.db',
-              ...(asset.ignore ?? []),
+              ...(asset.ignore ?? [])
             ],
-            dot: true,
-          },
+            dot: true
+          }
         };
-      }),
+      })
     });
 
     new CopyWebpackPlugin({
@@ -148,12 +156,12 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
               '.gitkeep',
               '**/.DS_Store',
               '**/Thumbs.db',
-              ...(asset.ignore ?? []),
+              ...(asset.ignore ?? [])
             ],
-            dot: true,
-          },
+            dot: true
+          }
         };
-      }),
+      })
     });
     extraPlugins.push(copyWebpackPluginInstance);
   }
@@ -164,11 +172,15 @@ export function getBaseWebpackPartial(options: BuildBuilderOptions): Configurati
 }
 
 function getAliases(options: BuildBuilderOptions): { [key: string]: string } {
-  return options.fileReplacements.reduce(
+  const replacements = options.fileReplacements.reduce(
     (aliases, replacement) => ({
       ...aliases,
       [replacement.replace]: replacement.with
     }),
     {}
   );
+  return Object.keys(options.alias).reduce((aliases, key) => ({
+    ...aliases,
+    [key]: path.resolve(options.root, options.alias[key])
+  }), replacements);
 }

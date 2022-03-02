@@ -23,7 +23,7 @@ export function generatePackageJson(
     name: projectName,
     version: '0.0.1',
     main: INDEX_OUTPUT_FILENAME,
-    dependencies: {},
+    dependencies: {}
   };
 
   try {
@@ -32,18 +32,13 @@ export function generatePackageJson(
     if (!packageJson.dependencies) {
       packageJson.dependencies = {};
     }
-  } catch (e) {}
+  } catch (e) {
+  }
 
   const rootPackageJson = readJsonFile(`${options.root}/package.json`);
   const npmDeps = findAllNpmDeps(projectName, graph);
   const implicitDeps = findAllNpmImplicitDeps(rootPackageJson, options.implicitDependencies);
   const dependencies = Object.assign({}, implicitDeps, npmDeps);
-
-  packageJson.version = rootPackageJson.version || '0.0.0';
-  packageJson['author'] = rootPackageJson.author || '';
-  packageJson['description'] = rootPackageJson.description || '';
-  packageJson['license'] = rootPackageJson.license || 'UNLICENSED';
-  packageJson['private'] = rootPackageJson.private || true;
 
   // update dependencies
   Object.entries(dependencies).forEach(([packageName, version]) => {
@@ -78,11 +73,10 @@ function findAllNpmDeps(
   graph.dependencies[projectName]?.forEach((dep) => {
     findAllNpmDeps(dep.target, graph, list, seen);
   });
-
   return list;
 }
 
- function findAllNpmImplicitDeps(packageJson, implicitDeps: Array<string>) {
+function findAllNpmImplicitDeps(packageJson, implicitDeps: Array<string>) {
 
   const dependencies = implicitDeps.reduce((acc, dep) => {
     acc[dep] = packageJson.dependencies[dep];
