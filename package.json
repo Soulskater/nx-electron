@@ -12,7 +12,8 @@
     "publish": "cd dist/packages/nx-electron && npm publish",
     "publish:alpha": "cd dist/packages/nx-electron && npm publish --tag alpha",
     "publish:beta": "cd dist/packages/nx-electron && npm publish --tag beta",
-    "release": "cd packages/nx-electron && npm run release"
+    "release": "cd packages/nx-electron && npm run release",
+    "install": "( npm install . && npm run build ) || echo \"SKIP: NON GIT SOURCE\""
   },
   "private": true,
   "devDependencies": {
