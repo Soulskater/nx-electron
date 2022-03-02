@@ -12,8 +12,7 @@
     "publish": "cd dist/packages/nx-electron && npm publish",
     "publish:alpha": "cd dist/packages/nx-electron && npm publish --tag alpha",
     "publish:beta": "cd dist/packages/nx-electron && npm publish --tag beta",
-    "release": "cd packages/nx-electron && npm run release",
-    "install": "npm run build"
+    "release": "cd packages/nx-electron && npm run release"
   },
   "private": true,
   "devDependencies": {
